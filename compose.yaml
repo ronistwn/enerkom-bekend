@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: postgres_container
+    environment:
+      POSTGRES_DB: postgres  # Nama database sesuai dengan konfigurasi Spring Boot
+      POSTGRES_USER: postgres  # Username sesuai dengan konfigurasi Spring Boot
+      POSTGRES_PASSWORD: postgre  # Password sesuai dengan konfigurasi Spring Boot
+    ports:
+      - '5432:5432'  # Menghubungkan port 5432 di container ke port 5432 di host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Volume untuk menyimpan data PostgreSQL secara persisten
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring_app_container
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres  # URL database sesuai dengan pengaturan Spring Boot
+      SPRING_DATASOURCE_USERNAME: postgres  # Username database
+      SPRING_DATASOURCE_PASSWORD: postgre  # Password database
+    ports:
+      - '8192:8192'  # Menghubungkan port 8192 di container ke port 8192 di host
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
